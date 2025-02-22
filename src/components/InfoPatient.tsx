@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import patientService from '../services/patients';
 import { Diagnosis, Entry } from '../types';
+import EntryDetails from './EntryDetails';
 
 const InfoPatient = ({ diagnoses }: { diagnoses: Diagnosis[] }) => {
 	const [patient, setPatient] = useState<Patient | null>(null);
@@ -24,23 +25,12 @@ const InfoPatient = ({ diagnoses }: { diagnoses: Diagnosis[] }) => {
 				</h3>
 				<p>ssn: {patient.ssn}</p>
 				<p>occupation: {patient.occupation}</p>
-				{patient.entries.length > 0 && <p>entries</p>}
-				{patient.entries.map((e: Entry) => {
-					return (
-						<div key={e.id}>
-							<p>
-								{e.date} {e.description}
-							</p>
-							<ul>
-								{e.diagnosisCodes?.map((d: string) => (
-									<li key={d}>
-										{d}: {diagnoses.filter((dia) => dia.code === d)[0].name}
-									</li>
-								))}
-							</ul>
-						</div>
-					);
-				})}
+				{patient.entries.length > 0 && <h4>entries</h4>}
+				<div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+					{patient.entries.map((e: Entry) => {
+						return <EntryDetails key={e.id} entry={e} diagnoses={diagnoses} />;
+					})}
+				</div>
 			</>
 		);
 	}
