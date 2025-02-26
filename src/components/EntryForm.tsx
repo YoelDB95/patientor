@@ -1,7 +1,23 @@
-import { Alert, Button, Input, InputLabel } from '@mui/material';
+import {
+	Alert,
+	Button,
+	FormControl,
+	FormControlLabel,
+	FormLabel,
+	Input,
+	InputLabel,
+	Radio,
+	RadioGroup,
+} from '@mui/material';
 import React, { useState } from 'react';
 import patientService from '../services/patients';
-import { NewEntry, Patient } from '../types';
+import {
+	Discharge,
+	HealthCheckRating,
+	NewEntry,
+	Patient,
+	SickLeave,
+} from '../types';
 import axios from 'axios';
 
 const EntryForm = ({
@@ -16,8 +32,19 @@ const EntryForm = ({
 	const [description, setDescription] = useState<string>('');
 	const [date, setDate] = useState<string>('');
 	const [specialist, setSpecialist] = useState<string>('');
-	const [healthCheckRating, setHealthCheckRating] = useState<number>(0);
 	const [diagnosisCodes, setDiagnosesCodes] = useState<string>('');
+	const [type, setType] = useState<string>('Hospital');
+	const [discharge, setDischarge] = useState<Discharge>({
+		date: '',
+		criteria: '',
+	});
+	const [healthCheckRating, setHealthCheckRating] =
+		useState<HealthCheckRating>(0);
+	const [employerName, setEmployerName] = useState<string>('');
+	const [sickLeave, setSickLeave] = useState<SickLeave>({
+		startDate: '',
+		endDate: '',
+	});
 	const [error, setError] = useState<string>('');
 
 	const handleSubmit = (e: React.SyntheticEvent) => {
@@ -42,6 +69,16 @@ const EntryForm = ({
 				setHealthCheckRating(0);
 				setSpecialist('');
 				setError('');
+				setDischarge({
+					date: '',
+					criteria: '',
+				});
+				setEmployerName('');
+				setSickLeave({
+					startDate: '',
+					endDate: '',
+				});
+				setType('Hospital');
 			})
 			.catch((e: unknown) => {
 				if (axios.isAxiosError(e)) {
@@ -50,6 +87,80 @@ const EntryForm = ({
 					}
 				}
 			});
+	};
+
+	const switchRender = () => {
+		switch (type) {
+			case 'Hospital':
+				return (
+					<>
+						<InputLabel>Discharge</InputLabel>
+						<div>
+							<InputLabel>Date</InputLabel>
+							<Input
+								type='text'
+								value={discharge.date}
+								onChange={(e) =>
+									setDischarge({ ...discharge, date: e.target.value })
+								}
+							/>
+						</div>
+						<div>
+							<InputLabel>Criteria</InputLabel>
+							<Input
+								type='text'
+								value={discharge.criteria}
+								onChange={(e) =>
+									setDischarge({ ...discharge, criteria: e.target.value })
+								}
+							/>
+						</div>
+					</>
+				);
+			case 'HealthCheck':
+				return (
+					<div>
+						<InputLabel>HealthCheck rating</InputLabel>
+						<Input
+							type='number'
+							value={healthCheckRating}
+							onChange={(e) => setHealthCheckRating(Number(e.target.value))}
+						/>
+					</div>
+				);
+			case 'OccupationalHealthcare':
+				return (
+					<>
+						<InputLabel>Employer name</InputLabel>{' '}
+						<Input
+							type='text'
+							value={employerName}
+							onChange={(e) => setEmployerName(e.target.value)}
+						/>
+						<InputLabel>Sick leave</InputLabel>{' '}
+						<div>
+							<InputLabel>Start date</InputLabel>
+							<Input
+								type='text'
+								value={sickLeave.startDate}
+								onChange={(e) =>
+									setSickLeave({ ...sickLeave, startDate: e.target.value })
+								}
+							/>
+						</div>
+						<div>
+							<InputLabel>End date</InputLabel>
+							<Input
+								type='text'
+								value={sickLeave.endDate}
+								onChange={(e) =>
+									setSickLeave({ ...sickLeave, endDate: e.target.value })
+								}
+							/>
+						</div>
+					</>
+				);
+		}
 	};
 
 	return (
@@ -76,19 +187,39 @@ const EntryForm = ({
 						value={specialist}
 						onChange={(e) => setSpecialist(e.target.value)}
 					/>
-					<InputLabel>HealthCheck rating</InputLabel>
-					<Input
-						type='number'
-						value={healthCheckRating}
-						onChange={(e) => setHealthCheckRating(Number(e.target.value))}
-					/>
 					<InputLabel>Diagnosis codes(separate with spaces)</InputLabel>
 					<Input
 						type='text'
 						value={diagnosisCodes}
 						onChange={(e) => setDiagnosesCodes(e.target.value)}
 					/>
+					<FormControl>
+						<FormLabel id='demo-radio-buttons-group-label'>Type</FormLabel>
+						<RadioGroup
+							aria-labelledby='demo-radio-buttons-group-label'
+							name='radio-buttons-group'
+							value={type}
+							onChange={(e) => setType(e.target.value)}
+						>
+							<FormControlLabel
+								value='Hospital'
+								control={<Radio />}
+								label='Hospital'
+							/>
+							<FormControlLabel
+								value='OccupationalHealthcare'
+								control={<Radio />}
+								label='OccupationalHealthcare'
+							/>
+							<FormControlLabel
+								value='HealthCheck'
+								control={<Radio />}
+								label='HealthCheck'
+							/>
+						</RadioGroup>
+					</FormControl>
 				</div>
+				{switchRender()}
 				<Button variant='contained' color='primary' type='submit'>
 					Add
 				</Button>
