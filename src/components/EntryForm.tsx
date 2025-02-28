@@ -100,7 +100,7 @@ const EntryForm = ({
 						<div>
 							<InputLabel>Date</InputLabel>
 							<Input
-								type='text'
+								type='date'
 								value={discharge.date}
 								onChange={(e) =>
 									setDischarge({ ...discharge, date: e.target.value })
