@@ -6,8 +6,10 @@ import {
 	FormLabel,
 	Input,
 	InputLabel,
+	MenuItem,
 	Radio,
 	RadioGroup,
+	Select,
 } from '@mui/material';
 import React, { useState } from 'react';
 import patientService from '../services/patients';
@@ -121,16 +123,20 @@ const EntryForm = ({
 				return (
 					<div>
 						<InputLabel>HealthCheck rating</InputLabel>
-						<Input
-							type='number'
+						<Select
 							value={healthCheckRating}
 							onChange={(e) => setHealthCheckRating(Number(e.target.value))}
-						/>
+						>
+							<MenuItem value={0}>0</MenuItem>
+							<MenuItem value={1}>1</MenuItem>
+							<MenuItem value={2}>2</MenuItem>
+							<MenuItem value={3}>3</MenuItem>
+						</Select>
 					</div>
 				);
 			case 'OccupationalHealthcare':
 				return (
-					<>
+					<div style={{ display: 'flex', flexDirection: 'column' }}>
 						<InputLabel>Employer name</InputLabel>{' '}
 						<Input
 							type='text'
@@ -138,27 +144,23 @@ const EntryForm = ({
 							onChange={(e) => setEmployerName(e.target.value)}
 						/>
 						<InputLabel>Sick leave</InputLabel>{' '}
-						<div>
-							<InputLabel>Start date</InputLabel>
-							<Input
-								type='text'
-								value={sickLeave.startDate}
-								onChange={(e) =>
-									setSickLeave({ ...sickLeave, startDate: e.target.value })
-								}
-							/>
-						</div>
-						<div>
-							<InputLabel>End date</InputLabel>
-							<Input
-								type='text'
-								value={sickLeave.endDate}
-								onChange={(e) =>
-									setSickLeave({ ...sickLeave, endDate: e.target.value })
-								}
-							/>
-						</div>
-					</>
+						<InputLabel>Start date</InputLabel>
+						<Input
+							type='date'
+							value={sickLeave.startDate}
+							onChange={(e) =>
+								setSickLeave({ ...sickLeave, startDate: e.target.value })
+							}
+						/>
+						<InputLabel>End date</InputLabel>
+						<Input
+							type='date'
+							value={sickLeave.endDate}
+							onChange={(e) =>
+								setSickLeave({ ...sickLeave, endDate: e.target.value })
+							}
+						/>
+					</div>
 				);
 		}
 	};
@@ -177,7 +179,7 @@ const EntryForm = ({
 					/>
 					<InputLabel>Date</InputLabel>
 					<Input
-						type='text'
+						type='date'
 						value={date}
 						onChange={(e) => setDate(e.target.value)}
 					/>
